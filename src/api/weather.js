@@ -1,16 +1,13 @@
-require("dotenv").config();
-const VERSE_URL = process.env.VERSE_URL;
-const IP_API = process.env.IP_API;
-const WEATHER_API = process.env.WEATHER_API;
+import { getHourMessage, getHourOfDay } from "../utils/date.js";
+import { IP_API, WEATHER_API } from "../config/config.js";
+import { IPinfoWrapper } from "node-ipinfo";
 
 const getLocation = async () => {
     try {
-      
-        const { IPinfoWrapper } = require("node-ipinfo");
         const ipinfo = new IPinfoWrapper(IP_API);
 
         const response = await ipinfo.lookupIp("");
-        
+
         if (!response) {
             throw new Error("Error: could not get IP address");
         }
@@ -23,7 +20,7 @@ const getLocation = async () => {
     }
 }
 
-const displayWeather = async () => {
+export const displayWeather = async () => {
     try {
         const [latitude, longitude] = await getLocation();
 
@@ -41,36 +38,10 @@ const displayWeather = async () => {
         const humidity = data.main.humidity;
         const windSpeed = data.wind.speed;
 
-        console.log(`In ${city}, the weather is currently ${weatherDescription} with a temperature of ${temperature}°C. Humidity is at ${humidity}% and the wind speed is ${windSpeed} m/s.`);
-        
+        const hourMessage = getHourMessage(getHourOfDay())
+        console.log(`${hourMessage}, in ${city}, the weather is currently ${weatherDescription} with a temperature of ${temperature}°C. Humidity is at ${humidity}% and the wind speed is ${windSpeed} m/s.\n`);
+
     } catch (error) {
         console.log(error.message);
     }
 }
-
-// Async/Await method
-const displayVerseOfTheDay = async () => {
-    try {
-        const response = await fetch(VERSE_URL);
-
-        if (!response.ok) {
-            throw new Error("Error: Could not fetch verse of the day");
-        }
-
-        const data = await response.json();
-
-        let verseReference = data.verse.details.reference;
-        let verseText = data.verse.details.text;
-        console.log(`${verseReference} - ${verseText}`);
-    } catch (error) {
-        console.log(error.message);
-    }
-}
-
-const runStartUp = () => {
-    displayWeather();
-    displayVerseOfTheDay();
-}
-
-runStartUp();
-
