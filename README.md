@@ -1,7 +1,7 @@
 # Terminal Startup Message
 
 A simple CLI script written in plain JavaScript that displays a custom message when you open your terminal. 
-It fetches your location using IP Geolocation API, and uses that to determine the
+It fetches your location using the IP Geolocation API, and uses that to determine the
 current weather using the OpenWeather API. It also retrieves a Bible verse of the day from the OurManna API.
 
 ## Features
